@@ -3,7 +3,7 @@ import { HttpRequest } from '../protocols/http'
 import { LoginController } from './login'
 
 describe('LoginController', () => {
-  test('should returns badRequest when email not passed',async () => {
+  test('should returns badRequest when email not provide',async () => {
     const loginControllerSut = new LoginController()
 
     const httpRequest: HttpRequest = {
