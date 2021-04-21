@@ -13,4 +13,17 @@ describe('LoginController', () => {
 
     expect(httpResponse.body).toEqual(new MissingParamsError('email'))
   })
+
+  test('should returns badRequest when password not ptovide',async () => {
+    const loginControllerSut = new LoginController()
+
+    const httpRequest: HttpRequest = {
+      body: {
+        email: 'valid_email'
+      }
+    }
+    const httpResponse = await loginControllerSut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body).toEqual(new MissingParamsError('password'))
+  })
 })
