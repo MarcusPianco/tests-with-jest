@@ -4,6 +4,10 @@ import { EmailValidator } from '../protocols/email-validator'
 import { HttpRequest } from '../protocols/http'
 import { LoginController } from './login'
 
+interface SutTytpes{
+  sut: LoginController
+  emailvalidatorStub: EmailValidator
+}
 const makeEmailValidatorStub = (): EmailValidator => {
   class EmailValidatorStub implements EmailValidator {
     isValid (email: string): boolean {
@@ -13,37 +17,42 @@ const makeEmailValidatorStub = (): EmailValidator => {
   return new EmailValidatorStub()
 }
 
+const makeSut = (): SutTytpes => {
+  const emailvalidatorStub = makeEmailValidatorStub()
+  const sut = new LoginController(emailvalidatorStub)
+  return {
+    sut,
+    emailvalidatorStub
+  }
+}
+
 describe('LoginController', () => {
   test('should returns badRequest when email not provide',async () => {
-    const emailValidatorStub = makeEmailValidatorStub()
-    const loginControllerSut = new LoginController(emailValidatorStub)
+    const { sut } = makeSut()
 
     const httpRequest: HttpRequest = {
       body: {
         password: 'valid_password'
       }
     }
-    const httpResponse = await loginControllerSut.handle(httpRequest)
+    const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new MissingParamsError('email'))
   })
 
   test('should returns badRequest when password not ptovide',async () => {
-    const emailValidatorStub = makeEmailValidatorStub()
-    const loginControllerSut = new LoginController(emailValidatorStub)
-
+    const { sut } = makeSut()
     const httpRequest: HttpRequest = {
       body: {
         email: 'valid_email'
       }
     }
-    const httpResponse = await loginControllerSut.handle(httpRequest)
+    const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new MissingParamsError('password'))
   })
   test('should returns badRequest when email is invalid',async () => {
-    const emailValidatorStub = makeEmailValidatorStub()
-    const loginControllerSut = new LoginController(emailValidatorStub)
+    const { sut, emailvalidatorStub } = makeSut()
 
     const httpRequest: HttpRequest = {
       body: {
@@ -51,8 +60,8 @@ describe('LoginController', () => {
         password: 'valid_password'
       }
     }
-    jest.spyOn(emailValidatorStub,'isValid').mockReturnValueOnce(false)
-    const httpResponse = await loginControllerSut.handle(httpRequest)
+    jest.spyOn(emailvalidatorStub,'isValid').mockReturnValueOnce(false)
+    const httpResponse = await sut.handle(httpRequest)
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new InvalidParamsError('email'))
