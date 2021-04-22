@@ -66,4 +66,19 @@ describe('LoginController', () => {
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new InvalidParamsError('email'))
   })
+  test('should returns status code 200 ok when validations passed',async () => {
+    const { sut, emailvalidatorStub } = makeSut()
+
+    const httpRequest: HttpRequest = {
+      body: {
+        email: 'valid_email@gmail.com',
+        password: 'valid_password'
+      }
+    }
+    jest.spyOn(emailvalidatorStub,'isValid').mockReturnValueOnce(true)
+    const httpResponse = await sut.handle(httpRequest)
+
+    expect(httpResponse.statusCode).toBe(200)
+    expect(httpResponse.body).toEqual('fields validated')
+  })
 })
