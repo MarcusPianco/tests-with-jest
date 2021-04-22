@@ -1,7 +1,7 @@
 import { MissingParamsError } from '../errors/missing-params-error'
 import { Controller } from '../protocols/controller'
 import { HttpRequest, HttpResponse } from '../protocols/http'
-import { badRequest } from '../helpers/http-helper'
+import { badRequest, ok } from '../helpers/http-helper'
 import { EmailValidator } from '../protocols/email-validator'
 import { InvalidParamsError } from '../errors/invalid-params-error'
 export class LoginController implements Controller {
@@ -25,5 +25,6 @@ export class LoginController implements Controller {
     if (!emailIsValid) {
       return badRequest(new InvalidParamsError('email'))
     }
+    return ok('fields validated')
   }
 }
