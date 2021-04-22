@@ -1,5 +1,6 @@
 import { InvalidParamsError } from '../errors/invalid-params-error'
 import { MissingParamsError } from '../errors/missing-params-error'
+import { ServerError } from '../errors/server-error'
 import { EmailValidator } from '../protocols/email-validator'
 import { HttpRequest } from '../protocols/http'
 import { LoginController } from './login'
@@ -80,5 +81,22 @@ describe('LoginController', () => {
 
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toEqual('fields validated')
+  })
+  test('should returns status code 500 ServErerror if valiadtor throws',async () => {
+    const { sut, emailvalidatorStub } = makeSut()
+
+    const httpRequest: HttpRequest = {
+      body: {
+        email: 'valid_email@gmail.com',
+        password: 'valid_password'
+      }
+    }
+    jest.spyOn(emailvalidatorStub,'isValid').mockImplementationOnce(() => {
+      throw new Error('')
+    })
+    const httpResponse = await sut.handle(httpRequest)
+
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
   })
 })
