@@ -26,6 +26,7 @@
     "test": "jest --passWithNoTests  --no-cache --noStackTrace --runInBand",
     "test:staged": "npm test -- --findRelatedTests",
     "test:ci": "npm test -- --coverage",
+    "test:coverage": "npm test -- --collect-coverage",
     "test:unit": "npm test -- --watch -c jest-unit-config.js"
   },
   "dependencies": {
