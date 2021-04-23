@@ -138,4 +138,19 @@ describe('LoginController', () => {
       password: 'valid_password'
     })
   })
+  test('should return statuscode 500 if logon throws',async () => {
+    const { sut, signinUserStub } = makeSut()
+
+    const httpRequest: HttpRequest = {
+      body: {
+        email: 'valid_email@gmail.com',
+        password: 'valid_password'
+      }
+    }
+    jest.spyOn(signinUserStub,'logon').mockResolvedValue(Promise.reject(new Error('')))
+    const httpResponse = await sut.handle(httpRequest)
+
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
+  })
 })
