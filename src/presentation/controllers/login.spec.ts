@@ -1,3 +1,5 @@
+import { LogonParams, SigninUser } from '@/data/ptotocols/signin-user'
+import { UserDto } from '@/data/ptotocols/user-dto'
 import { InvalidParamsError } from '../errors/invalid-params-error'
 import { MissingParamsError } from '../errors/missing-params-error'
 import { ServerError } from '../errors/server-error'
@@ -8,6 +10,7 @@ import { LoginController } from './login'
 interface SutTytpes{
   sut: LoginController
   emailvalidatorStub: EmailValidator
+  signinUserStub: SigninUser
 }
 const makeEmailValidatorStub = (): EmailValidator => {
   class EmailValidatorStub implements EmailValidator {
@@ -18,12 +21,31 @@ const makeEmailValidatorStub = (): EmailValidator => {
   return new EmailValidatorStub()
 }
 
+const makeSignInStub = (): SigninUser => {
+  class SigninUserStub implements SigninUser {
+    async logon (params: LogonParams): Promise<UserDto> {
+      return Promise.resolve(
+        {
+          email: 'valid_email',
+          id: '1',
+          name: 'valid_name',
+          password: 'valid_password'
+
+        }
+      )
+    }
+  }
+  return new SigninUserStub()
+}
+
 const makeSut = (): SutTytpes => {
   const emailvalidatorStub = makeEmailValidatorStub()
-  const sut = new LoginController(emailvalidatorStub)
+  const signinUserStub = makeSignInStub()
+  const sut = new LoginController(emailvalidatorStub,signinUserStub)
   return {
     sut,
-    emailvalidatorStub
+    emailvalidatorStub,
+    signinUserStub
   }
 }
 
@@ -98,5 +120,22 @@ describe('LoginController', () => {
 
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
+  })
+  test('should call logon with correct values',async () => {
+    const { sut, signinUserStub } = makeSut()
+
+    const httpRequest: HttpRequest = {
+      body: {
+        email: 'valid_email@gmail.com',
+        password: 'valid_password'
+      }
+    }
+    const signInSpy = jest.spyOn(signinUserStub,'logon')
+    await sut.handle(httpRequest)
+
+    expect(signInSpy).toHaveBeenCalledWith({
+      email: 'valid_email@gmail.com',
+      password: 'valid_password'
+    })
   })
 })
