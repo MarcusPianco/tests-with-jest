@@ -23,8 +23,8 @@ The use-cases uses in this projet to learn `jest` tests are:
   
 Commands to run the tests(after clone this repository):
 
-  run the tests ``bash yarn test``
-  run the tests and provide a automatic env to re-run ``bash yarn test:unit``
-  run the tests and provide a coverage``bash yarn test:ci``
+  run the tests ``yarn test``
+  run the tests and provide a automatic env to re-run ``yarn test:unit``
+  run the tests and provide a coverage``yarn test:ci``
   
 Contribute to this Idea and have happy weekends without bugs and boss calls 🤗.
