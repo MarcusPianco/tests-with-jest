@@ -28,8 +28,9 @@ export class LoginController implements Controller {
       if (!emailIsValid) {
         return badRequest(new InvalidParamsError('email'))
       }
-      await this._signinUser.logon({ email,password })
-      return ok('fields validated')
+      const logonUserResponse = await this._signinUser.logon({ email,password })
+
+      return ok(logonUserResponse)
     } catch (error) {
       return serverError()
     }
