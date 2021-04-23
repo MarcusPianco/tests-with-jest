@@ -161,14 +161,11 @@ describe('LoginController', () => {
         password: 'valid_password'
       }
     }
-    const userDataResponse = await sut.handle(httpRequest)
+    const userSuccessResponse = { email: 'valid_email', id: '1', name: 'valid_name' }
+    const { statusCode, body } = await sut.handle(httpRequest)
+    const { email,id,name } = body
 
-    expect(userDataResponse.statusCode).toBe(200)
-    expect(userDataResponse.body).toEqual({
-      email: 'valid_email',
-      id: '1',
-      name: 'valid_name',
-      password: 'valid_password'
-    })
+    expect(statusCode).toBe(200)
+    expect({ name,id,email }).toEqual(userSuccessResponse)
   })
 })
