@@ -102,7 +102,6 @@ describe('LoginController', () => {
     const httpResponse = await sut.handle(httpRequest)
 
     expect(httpResponse.statusCode).toBe(200)
-    expect(httpResponse.body).toEqual('fields validated')
   })
   test('should returns status code 500 ServErerror if valiadtor throws',async () => {
     const { sut, emailvalidatorStub } = makeSut()
@@ -152,5 +151,24 @@ describe('LoginController', () => {
 
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
+  })
+  test('should return userData if logon success',async () => {
+    const { sut } = makeSut()
+
+    const httpRequest: HttpRequest = {
+      body: {
+        email: 'valid_email@gmail.com',
+        password: 'valid_password'
+      }
+    }
+    const userDataResponse = await sut.handle(httpRequest)
+
+    expect(userDataResponse.statusCode).toBe(200)
+    expect(userDataResponse.body).toEqual({
+      email: 'valid_email',
+      id: '1',
+      name: 'valid_name',
+      password: 'valid_password'
+    })
   })
 })
