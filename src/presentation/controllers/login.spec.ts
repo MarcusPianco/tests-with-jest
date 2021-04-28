@@ -1,8 +1,11 @@
+import { FindUser } from '@/data/ptotocols/find-user'
 import { LogonParams, SigninUser } from '@/data/ptotocols/signin-user'
 import { UserDto } from '@/data/ptotocols/user-dto'
-import { InvalidParamsError } from '../errors/invalid-params-error'
+import { UserModel } from '@/domain/models/user'
+import { ValidationError } from '../errors/validation-errors'
 import { MissingParamsError } from '../errors/missing-params-error'
 import { ServerError } from '../errors/server-error'
+import { InvalidParamsError } from '../errors/invalid-params-error'
 import { EmailValidator } from '../protocols/email-validator'
 import { HttpRequest } from '../protocols/http'
 import { LoginController } from './login'
@@ -11,6 +14,7 @@ interface SutTytpes{
   sut: LoginController
   emailvalidatorStub: EmailValidator
   signinUserStub: SigninUser
+  findUserStub: FindUser
 }
 const makeEmailValidatorStub = (): EmailValidator => {
   class EmailValidatorStub implements EmailValidator {
@@ -19,6 +23,20 @@ const makeEmailValidatorStub = (): EmailValidator => {
     }
   }
   return new EmailValidatorStub()
+}
+
+const makeFindUser = (): FindUser => {
+  class FindUserStub implements FindUser {
+    async find (email: string): Promise<UserModel> {
+      return Promise.resolve({
+        email: 'valid_email@gmail.com',
+        id: 'valid_id',
+        name: 'valid_name',
+        password: 'valid_password'
+      })
+    }
+  }
+  return new FindUserStub()
 }
 
 const makeSignInStub = (): SigninUser => {
@@ -41,11 +59,13 @@ const makeSignInStub = (): SigninUser => {
 const makeSut = (): SutTytpes => {
   const emailvalidatorStub = makeEmailValidatorStub()
   const signinUserStub = makeSignInStub()
-  const sut = new LoginController(emailvalidatorStub,signinUserStub)
+  const findUserStub = makeFindUser()
+  const sut = new LoginController(emailvalidatorStub,signinUserStub, findUserStub)
   return {
     sut,
     emailvalidatorStub,
-    signinUserStub
+    signinUserStub,
+    findUserStub
   }
 }
 
@@ -167,5 +187,23 @@ describe('LoginController', () => {
 
     expect(statusCode).toBe(200)
     expect({ name,id,email }).toEqual(userSuccessResponse)
+  })
+  // TODO: refactor -> retornar um erro e não undefined(usernot found)
+  test('should return badRequest if user not exist',async () => {
+    const { sut, findUserStub } = makeSut()
+
+    const httpRequest: HttpRequest = {
+      body: {
+        email: 'valid_email@gmail.com',
+        password: 'valid_password'
+      }
+    }
+    jest.spyOn(findUserStub,'find').mockImplementationOnce(() => {
+      return undefined
+    })
+    const { statusCode, body } = await sut.handle(httpRequest)
+
+    expect(statusCode).toBe(400)
+    expect(body).toEqual(new ValidationError())
   })
 })
