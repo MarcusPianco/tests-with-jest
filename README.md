@@ -12,12 +12,13 @@ The `libs` used to provide this environment:
 
 The use-cases uses in this projet to learn `jest` tests are:
 - User Login
-  - Fields Validation ✅ (100%-100% coverage)
-  - Lgon Success 🚸
-  - Logon Failure
-  - Application failure
-  - User missing password (and renew pass)
-  - User blocked to many access attempts
+  - Fields Validation ✅  (unit-tests)
+  - Logon Success ✅  (unit-tests)
+  - Logon Failure ✅  (unit-tests)
+  - Application failure ✅  (unit-tests)
+  - User not exist✅  (unit-tests)
+  - User missing password (and renew pass)🚸 
+  - User blocked to many access attempts 
   - User change credentials (email)
   
   
