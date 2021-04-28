@@ -1,12 +1,8 @@
 import { MissingParamsError } from '../errors/missing-params-error'
-import { Controller } from '../protocols/controller'
-import { HttpRequest, HttpResponse } from '../protocols/http'
 import { badRequest, ok, serverError } from '../helpers/http-helper'
-import { EmailValidator } from '../protocols/email-validator'
 import { InvalidParamsError } from '../errors/invalid-params-error'
-import { SigninUser } from '@/data/ptotocols/signin-user'
-import { FindUser } from '@/data/ptotocols/find-user'
 import { ValidationError } from '../errors/validation-errors'
+import { Controller, EmailValidator, FindUser ,HttpRequest ,HttpResponse , SigninUser } from './login-protocols'
 
 export class LoginController implements Controller {
   private readonly _emailValidator: EmailValidator

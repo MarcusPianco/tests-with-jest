@@ -1,14 +1,11 @@
-import { FindUser } from '@/data/ptotocols/find-user'
-import { LogonParams, SigninUser } from '@/data/ptotocols/signin-user'
 import { UserDto } from '@/data/ptotocols/user-dto'
 import { UserModel } from '@/domain/models/user'
 import { ValidationError } from '../errors/validation-errors'
 import { MissingParamsError } from '../errors/missing-params-error'
 import { ServerError } from '../errors/server-error'
 import { InvalidParamsError } from '../errors/invalid-params-error'
-import { EmailValidator } from '../protocols/email-validator'
-import { HttpRequest } from '../protocols/http'
 import { LoginController } from './login'
+import { EmailValidator, FindUser ,HttpRequest , SigninUser, LogonParams } from './login-protocols'
 
 interface SutTytpes{
   sut: LoginController
