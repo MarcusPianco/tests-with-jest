@@ -1,9 +1,9 @@
 import { UserDto } from '@/data/ptotocols/user-dto'
 import { UserModel } from '@/domain/models/user'
-import { ValidationError } from '../errors/validation-errors'
-import { MissingParamsError } from '../errors/missing-params-error'
-import { ServerError } from '../errors/server-error'
-import { InvalidParamsError } from '../errors/invalid-params-error'
+import { ValidationError } from '../../errors/validation-errors'
+import { MissingParamsError } from '../../errors/missing-params-error'
+import { ServerError } from '../../errors/server-error'
+import { InvalidParamsError } from '../../errors/invalid-params-error'
 import { LoginController } from './login'
 import { EmailValidator, FindUser ,HttpRequest , SigninUser, LogonParams } from './login-protocols'
 
