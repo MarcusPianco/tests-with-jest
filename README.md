@@ -17,7 +17,7 @@ The use-cases uses in this projet to learn `jest` tests are:
   - Logon Failure ✅  (unit-tests)
   - Application failure ✅  (unit-tests)
   - User not exist✅  (unit-tests)
-  - User missing password (and renew pass)🚸 
+  - User missing password (unit tests)🚸 
   - User blocked to many access attempts 
   - User change credentials (email)
   
