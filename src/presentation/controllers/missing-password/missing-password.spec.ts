@@ -1,6 +1,7 @@
 import { UserModel } from '@/domain/models/user'
 import { FindUser } from '@/domain/usecases/find-user'
 import { InvalidParamsError } from '@/presentation/errors/invalid-params-error'
+import { MissingParamsError } from '@/presentation/errors/missing-params-error'
 import { EmailValidator } from '@/presentation/protocols/email-validator'
 import { MissingPasswordController } from './missing-password'
 
@@ -69,5 +70,15 @@ describe('MissingPasswordController', () => {
     const response = await sut.handle(httpRequest)
     expect(response.statusCode).toBe(400)
     expect(response.body).toEqual(new InvalidParamsError('email'))
+  })
+
+  test('should return badRequest if email is not exist in request',async () => {
+    const { sut } = makeSut()
+    const httpRequest = {
+      body: {}
+    }
+    const response = await sut.handle(httpRequest)
+    expect(response.statusCode).toBe(400)
+    expect(response.body).toEqual(new MissingParamsError('email'))
   })
 })
