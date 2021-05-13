@@ -81,4 +81,14 @@ describe('MissingPasswordController', () => {
     expect(response.statusCode).toBe(400)
     expect(response.body).toEqual(new MissingParamsError('email'))
   })
+
+  test('should return success email is valid',async () => {
+    const { sut } = makeSut()
+    const httpRequest = {
+      body: { email: 'valid_email' }
+    }
+    const response = await sut.handle(httpRequest)
+    expect(response.statusCode).toBe(200)
+    expect(response.body).toEqual('email recovery was send')
+  })
 })
