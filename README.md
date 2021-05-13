@@ -18,6 +18,9 @@ The use-cases uses in this projet to learn `jest` tests are:
   - Application failure ✅  (unit-tests)
   - User not exist✅  (unit-tests)
   - User missing password (unit tests)🚸 
+    - Refatorar para a busca do user ficar no gateway ou repository 
+      e lá subir fazer o throws do erro de userNotFound para a camada mais acima
+      tratando com um middleware dee erro ou no próprio controller com try catch
   - User blocked to many access attempts 
   - User change credentials (email)
   
