@@ -1,10 +1,21 @@
 import { UserModel } from '@/domain/models/user'
 import { FindUser } from '@/domain/usecases/find-user'
+import { InvalidParamsError } from '@/presentation/errors/invalid-params-error'
+import { EmailValidator } from '@/presentation/protocols/email-validator'
 import { MissingPasswordController } from './missing-password'
 
 interface SutTypes{
   sut: MissingPasswordController
   findUser: FindUser
+  emailValidatorStub: EmailValidator
+}
+const makeEmailValidatorStub = (): EmailValidator => {
+  class EmailValidatorStub implements EmailValidator {
+    isValid (email: string): boolean {
+      return true
+    }
+  }
+  return new EmailValidatorStub()
 }
 
 const makeFindUserStub = (): FindUser => {
@@ -23,10 +34,12 @@ const makeFindUserStub = (): FindUser => {
 
 const makeSut = (): SutTypes => {
   const findUser = makeFindUserStub()
-  const sut = new MissingPasswordController(findUser)
+  const emailValidatorStub = makeEmailValidatorStub()
+  const sut = new MissingPasswordController(findUser, emailValidatorStub)
   return {
     sut,
-    findUser
+    findUser,
+    emailValidatorStub
   }
 }
 
@@ -42,5 +55,19 @@ describe('MissingPasswordController', () => {
     }
     await sut.handle(httpRequest)
     expect(spyFind).toBeCalledWith('valid_email@email.com')
+  })
+
+  test('should return badRequest if email is invalid',async () => {
+    const { sut, emailValidatorStub } = makeSut()
+    jest.spyOn(emailValidatorStub,'isValid').mockReturnValueOnce(false)
+
+    const httpRequest = {
+      body: {
+        email: 'invalid_email'
+      }
+    }
+    const response = await sut.handle(httpRequest)
+    expect(response.statusCode).toBe(400)
+    expect(response.body).toEqual(new InvalidParamsError('email'))
   })
 })
