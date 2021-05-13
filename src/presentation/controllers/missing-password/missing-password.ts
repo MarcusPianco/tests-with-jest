@@ -1,5 +1,6 @@
 import { FindUser } from '@/domain/usecases/find-user'
 import { InvalidParamsError } from '@/presentation/errors/invalid-params-error'
+import { MissingParamsError } from '@/presentation/errors/missing-params-error'
 import { badRequest } from '@/presentation/helpers/http-helper'
 import { Controller } from '@/presentation/protocols/controller'
 import { EmailValidator } from '@/presentation/protocols/email-validator'
@@ -16,6 +17,10 @@ export class MissingPasswordController implements Controller {
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     const { email } = httpRequest.body
+
+    if (!email) {
+      return badRequest(new MissingParamsError('email'))
+    }
 
     if (!this._emailValidator.isValid(email)) {
       return badRequest(new InvalidParamsError('email'))
